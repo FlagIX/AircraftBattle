@@ -1,23 +1,34 @@
 ﻿#include<stdio.h>
 #include<graphics.h>
 
+//把图片加载进程序
+IMAGE bk;//背景的图片
+IMAGE img_role[2];//玩家飞机的图片
+IMAGE img_bull[2];//子弹的图片
+IMAGE img_enemy[2][2];//敌机图片    大敌机  小敌机
+
 
 enum MyEnum
 {
 	WIDTH = 450,//背景的高度和宽度
 	HEIGHT = 850,
-	BULLET_NUM = 15
+	BULLET_NUM = 15,
+	ENEMY_NUM = 10,
+	BIG,
+	SMALL
 };
 
-IMAGE bk;//背景的图片
-IMAGE img_role[2];//玩家飞机的图片
-IMAGE img_bull[2];//子弹的图片
 
+//飞机属性
 struct Plant {
 	int x;
 	int y;
 	bool live;//飞机是否死亡
-}player,bull[BULLET_NUM];
+	int width;
+	int height;
+	int hp;//血量
+	int type;//类型
+}player,bull[BULLET_NUM],enemy[ENEMY_NUM];
 
 
 
@@ -32,6 +43,14 @@ void Loadimg()
 	//子弹的图片
 	loadimage(&img_bull[0], "./Resource/images/bullet1.png");
 	loadimage(&img_bull[1], "./Resource/images/bullet2.png");
+	//敌机图片
+	
+	//小敌机
+	loadimage(&img_enemy[0][0], "./Resource/images/bullet1.png");
+	loadimage(&img_enemy[0][1], "./Resource/images/bullet2.png");
+	//大敌机
+	loadimage(&img_enemy[1][0], "./Resource/images/bullet1.png");
+	loadimage(&img_enemy[1][0], "./Resource/images/bullet2.png");
 }
 
 //玩家飞机初始化
@@ -85,6 +104,21 @@ void createBullte() {
 	}
 }
 
+//子弹移动
+void BullteMove() {
+	for (int i = 0; i < BULLET_NUM; i++)
+	{
+		if (bull[i].live)
+		{
+			bull[i].y -= 1;
+			if (bull[i].y < 0)
+			{
+				bull[i].live = false;
+			}
+		}
+	}
+}
+
 //玩家飞机移动  获取键盘信息：上下左右
 void playerMove(int speed) {
 	//操作键盘   键盘事件
@@ -110,11 +144,16 @@ void playerMove(int speed) {
 		if(player.x+60<WIDTH)
 		player.x += speed;
 	}
-	if (GetAsyncKeyState(VK_SPACE))
+
+	//如果按太快则会生成多个子弹    解决：造成一个延时的效果，使其丝滑一些
+	static DWORD t1 = 0, t2 = 0;//静态的二进制变量
+	//如果按空格，则生成一个子弹
+	if (GetAsyncKeyState(VK_SPACE)&&t2-t1>50)
 	{
-		//按了空格则生成一个子弹
 		createBullte();
+		t1 = t2;
 	}
+	t2 = GetTickCount();
 }
 
 
@@ -134,6 +173,7 @@ int main()
 		gemeDraw();
 		FlushBatchDraw();
 		playerMove(3);
+		BullteMove();
 	}
 	return 0;
 }
