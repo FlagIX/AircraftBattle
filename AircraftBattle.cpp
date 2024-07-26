@@ -61,15 +61,15 @@ void enemyHP(int i) {
 	{
 		enemy[i].type = SMALL;
 		enemy[i].hp = 1;
-		enemy[i].width = 10;
-		enemy[i].height = 17;
+		enemy[i].width = 156;
+		enemy[i].height = 108;
 	}
 	else
 	{
 		enemy[i].type = BIG;
 		enemy[i].hp = 3;
-		enemy[i].width = 20;//测量飞机图片
-		enemy[i].height = 25;
+		enemy[i].width = 156;//测量飞机图片
+		enemy[i].height = 108;
 	}
 }
 
@@ -111,8 +111,9 @@ void gemeDraw() {
 	{
 		if (bull[i].live)
 		{
+			putimage(bull[i].x, bull[i].y, &img_bull[0]);
 			putimage(bull[i].x, bull[i].y, &img_bull[1]);
-			putimage(bull[i].x, bull[i].y, &img_bull[1]);
+			rectangle(bull[i].x, bull[i].y, bull[i].x + 10, bull[i].y + 20);
 		}
 	}
 
@@ -126,6 +127,8 @@ void gemeDraw() {
 				//绘制大敌机
 				putimage(enemy[i].x, enemy[i].y, &img_enemy[1][0], NOTSRCERASE);
 				putimage(enemy[i].x, enemy[i].y, &img_enemy[1][1], NOTSRCERASE);
+				rectangle(enemy[i].x, enemy[i].y, enemy[i].x + enemy[i].width, enemy[i].y + enemy[i].height);
+
 			}
 			else
 			{
@@ -178,6 +181,7 @@ void createEnemy() {
 		{
 			enemy[i].live = true;
 			//x,y 是随机的
+			//enemy[i].type = rand() % 2;
 			enemy[i].x = rand() % (WIDTH-60);
 			enemy[i].y = 0;
 			break;
@@ -247,18 +251,32 @@ void playPlance() {
 		{
 			continue;
 		}
-		for (int k = 0; i < ENEMY_NUM; k++)
+		for (int k = 0; k < ENEMY_NUM; k++)
 		{
-			if (bull[k].x > enemy[i].x && bull[k].x<enemy[i].x + enemy[i].width &&
-				bull[k].y>enemy[i].y && bull[k].y < enemy[i].y + enemy[i].height)
+			if (!bull[k].live)
 			{
-				bull[i].live = false;
-				enemy[i].hp--;
+				continue;
+			}
+			if (bull[k].x > enemy[i].x )
+			{
+				if (bull[k].x < enemy[i].x + enemy[i].width)
+				{
+					if (bull[k].y > enemy[i].y)
+					{
+						if (bull[k].y < enemy[i].y + enemy[i].height)
+						{
+							bull[i].live = false;
+							enemy[i].hp--;
+						}
+					}
+				}
+				
 			}
 		}
-		if (enemy[i].hp <= 0)
+		if (enemy[i].live&&enemy[i].hp <= 0)
 		{
 			enemy[i].live = false;
+			printf("%d", i);
 		}
 	}
 }
@@ -303,7 +321,7 @@ int main()
 		} 
 		EnemyMove(1);
 		//子弹打敌机
-		//playPlance();
+		playPlance();
 	}
 	return 0;
 }
