@@ -122,7 +122,7 @@ void gemeDraw() {
 	{
 		if (enemy[i].live)
 		{
-			if (enemy[i].type = BIG)
+			if (enemy[i].type == BIG)
 			{
 				//绘制大敌机
 				putimage(enemy[i].x, enemy[i].y, &img_enemy[1][0], NOTSRCERASE);
@@ -179,9 +179,10 @@ void createEnemy() {
 		//没有敌机时候，再生成敌机
 		if (!enemy[i].live)
 		{
+			enemyHP(i);//敌机初始化
 			enemy[i].live = true;
 			//x,y 是随机的
-			//enemy[i].type = rand() % 2;
+			enemy[i].type = rand() % 2;
 			enemy[i].x = rand() % (WIDTH-60);
 			enemy[i].y = 0;
 			break;
@@ -257,23 +258,14 @@ void playPlance() {
 			{
 				continue;
 			}
-			if (bull[k].x > enemy[i].x )
+			if (bull[k].x > enemy[i].x&& bull[k].x < enemy[i].x + enemy[i].width&&
+				bull[k].y > enemy[i].y&& bull[k].y < enemy[i].y + enemy[i].height)
 			{
-				if (bull[k].x < enemy[i].x + enemy[i].width)
-				{
-					if (bull[k].y > enemy[i].y)
-					{
-						if (bull[k].y < enemy[i].y + enemy[i].height)
-						{
-							bull[i].live = false;
-							enemy[i].hp--;
-						}
-					}
-				}
-				
+				bull[i].live = false;
+				enemy[i].hp--;
 			}
 		}
-		if (enemy[i].live&&enemy[i].hp <= 0)
+		if (enemy[i].hp <= 0)
 		{
 			enemy[i].live = false;
 			printf("%d", i);
