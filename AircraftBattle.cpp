@@ -57,7 +57,7 @@ void Loadimg()
 //生产飞机
 void enemyHP(int i) {
 	//大飞机和小飞机是不一样的
-	if (rand()%8)//1->8都有可能
+	if (rand()%3)//1->8都有可能
 	{
 		enemy[i].type = SMALL;
 		enemy[i].hp = 1;
@@ -182,7 +182,6 @@ void createEnemy() {
 			enemyHP(i);//敌机初始化
 			enemy[i].live = true;
 			//x,y 是随机的
-			enemy[i].type = rand() % 2;
 			enemy[i].x = rand() % (WIDTH-60);
 			enemy[i].y = 0;
 			break;
